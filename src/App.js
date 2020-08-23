@@ -1,19 +1,140 @@
 import React, {Component} from 'react';
+import MaterialTable from 'material-table';
 
 import parkingi from './data/parkingi';
-
 import './App.css';
+
+//class App extends Component {
+
+
+
+//   render(){
+//     return(
+//       <div>
+//         {parkingi.features.map(park =><div key={park.properties.street+park.properties.spots+'/'+park.properties.handicappedSpots}> {park.properties.street+park.properties.spots+'/'+park.properties.handicappedSpots}</div>)}
+//       </div>
+//     )
+//   }
+// }
+// export default App;
+
+const newTabStreet=[];
+parkingi.features.map(park=>newTabStreet.push({name: park.properties.street}))
+console.log(newTabStreet.map(newTab => newTab.name.split('" "')))
+
 
 class App extends Component {
 
+ 
+  state = {
+    columns: [
+      { title: 'Nazwa ulicy', field: 'properties.street' },
+      { title: 'Liczba miejsc', field: 'properties.spots' },
+      { title: 'Liczba miejsc dla niepełnosprawnych', field: 'properties.handicappedSpots', type: 'numeric' },
+      { title: 'Płatny', field: 'properties.paid', type: 'boolean' },
+    ],
+    data: parkingi.features,
+
+  }
+
+  handleOnRowAdd = newData => new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+        this.setState((prevState) => {
+          const data = [...prevState.data];
+          data.push(newData);
+          return { ...prevState, data };
+        });
+      }, 600)
+  });
+
+  handleOnRowUpdate = oldData =>  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+      this.setState((prevState) => {
+        const data = [...prevState.data];
+        data.splice(data.indexOf(oldData), 1);
+        return { ...prevState, data };
+      });
+    }, 600)
+  });
+
+  handleOnRowDelete = oldData =>  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+      this.setState((prevState) => {
+        const data = [...prevState.data];
+        data.splice(data.indexOf(oldData), 1);
+        return { ...prevState, data };
+      });
+    }, 600)
+  });
 
 
   render(){
-    return(
-      <div>
-        {parkingi.features.map(park =><div key={park.properties.street+park.properties.spots}> {park.properties.street}</div>)}
-      </div>
+    return (
+      <MaterialTable
+        title="Parking"
+        columns={this.state.columns}
+        data={this.state.data}
+        editable={
+        {
+          onRowAdd: this.handleOnRowAdd,
+          onRowUpdate: this.handleOnRowUpdate,
+          onRowDelete: this.handleOnRowDelete,
+        }
+      }
+        localization={{
+          body: {
+              emptyDataSourceMessage: "Brak rekordów do wyświetlenia.",
+              addTooltip: 'Dodaj',
+              deleteTooltip: 'Usuń',
+              editTooltip: 'Edytuj',
+              filterRow: {
+                  filterTooltip: 'Filtr'
+              },
+              editRow: {
+                  deleteText: 'Czy chcesz usunąć?',
+                  cancelTooltip: 'Anuluj',
+                  saveTooltip: 'Zapisz'
+              }
+          },
+          grouping: {
+              placeholder: "Tirer l'entête ...",
+              groupedBy: 'Grupuj według:'
+          },
+          header: {
+              actions: 'Akcje'
+          },
+          pagination: {
+              labelDisplayedRows: '{from}-{to} z {count}',
+              labelRowsSelect: 'Rekordów',
+              labelRowsPerPage: 'Rekordów na stronie:',
+              firstAriaLabel: 'Pierwsza strona',
+              firstTooltip: 'Pierwsza strona',
+              previousAriaLabel: 'Poprzednia strona',
+              previousTooltip: 'Poprzednia strona',
+              nextAriaLabel: 'Następna strona',
+              nextTooltip: 'Następna strona',
+              lastAriaLabel: 'Ostatnia strona',
+              lastTooltip: 'Ostatnia strona'
+          },
+          toolbar: {
+              addRemoveColumns: 'Ajouter ou supprimer des colonnes',
+              nRowsSelected: '{0} rekordów(s) wybranych(s)',
+              showColumnsTitle: 'Wyświetl kolumny',
+              showColumnsAriaLabel: 'Wyświetl kolumny',
+              exportTitle: 'Eksportuj',
+              exportAriaLabel: 'Eksportuj',
+              exportName: 'Eksportuj jako CSV',
+              searchTooltip: 'Szukaj',
+              searchPlaceholder: 'Szukaj'
+          }
+     }}/>
     )
-  }
-}
+  }}
+  
+
+
+
 export default App;

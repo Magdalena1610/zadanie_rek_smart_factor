@@ -1,27 +1,10 @@
 import React, {Component} from 'react';
 import MaterialTable from 'material-table';
+import MapView from './MapView';
+
 
 import parkingi from './data/parkingi';
 import './App.css';
-
-//class App extends Component {
-
-
-
-//   render(){
-//     return(
-//       <div>
-//         {parkingi.features.map(park =><div key={park.properties.street+park.properties.spots+'/'+park.properties.handicappedSpots}> {park.properties.street+park.properties.spots+'/'+park.properties.handicappedSpots}</div>)}
-//       </div>
-//     )
-//   }
-// }
-// export default App;
-
-const newTabStreet=[];
-parkingi.features.map(park=>newTabStreet.push({name: park.properties.street}))
-console.log(newTabStreet.map(newTab => newTab.name.split('" "')))
-
 
 class App extends Component {
 
@@ -72,7 +55,9 @@ class App extends Component {
 
 
   render(){
+  
     return (
+      <div>
       <MaterialTable
         title="Parking"
         columns={this.state.columns}
@@ -131,6 +116,11 @@ class App extends Component {
               searchPlaceholder: 'Szukaj'
           }
      }}/>
+     <div>
+     <MapView data={this.state.data}/>
+     </div>
+     
+     </div>
     )
   }}
   

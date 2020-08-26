@@ -1,63 +1,48 @@
 import React, { Component } from "react";
-import 'ol/ol.css';
+import Map from "ol/Map";
+import View from "ol/View";
+import Tile from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
-import Circle from 'ol/geom/Circle';
-import Feature from 'ol/Feature';
-import GeoJSON from 'ol/format/GeoJSON';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+import {Vector as VectorLayer} from 'ol/layer';
 import {Vector as VectorSource} from 'ol/source';
-import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
+import FeatureFormat from 'ol/format/Feature';
 import WKT from 'ol/format/WKT';
 import parkingi from './data/parkingi';
-import {fromLonLat} from 'ol/proj';
-import {useGeographic} from 'ol/proj';
 
+console.log(parkingi)
 
+const wkt =
+  'POLYGON((10.689 -25.092, 34.595 ' +
+  '-20.170, 38.814 -35.639, 13.502 ' +
+  '-39.155, 10.689 -25.092))';
 
+ const format = new WKT();
 
-var styles = {
- 
-  'Polygon': new Style({
-    stroke: new Stroke({
-      color: 'blue',
-      lineDash: [4],
-      width: 3,
-    }),
-    fill: new Fill({
-      color: 'rgba(0, 0, 255, 0.1)',
-    }),
+ const feature = format.readFeature(wkt, {
+    dataProjection: 'EPSG:4326',
+    featureProjection: 'EPSG:3857',
   })
-};
-
-let vectorSource = new VectorSource({
-  features: new GeoJSON().readFeatures(parkingi),
-});
-
-let styleFunction = function (feature) {
-  return styles[feature.getGeometry().getType()];
-};
 
 class MapView extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { center: [18.606363236904144,54.38519346546863], zoom: 16 };
+    this.state = { center: [0, 0], zoom: 1 };
 
     this.olmap = new Map({
       target: null,
       layers: [
-        new TileLayer({
+        new Tile({
           source: new OSM()
         }),
         new VectorLayer({
-          source:vectorSource,
-          style: styleFunction
+          source: new VectorSource({
+            features: [feature]
+          })
         })
       ],
       view: new View({
-        center:fromLonLat(this.state.center),
+        center: this.state.center,
         zoom: this.state.zoom
       })
     });
@@ -65,14 +50,18 @@ class MapView extends Component {
 
   componentDidMount() {
     this.olmap.setTarget("map");
-    useGeographic();
+
+    // // Listen to map changes
+    // this.olmap.on("moveend", () => {
+    //   let center = this.olmap.getView().getCenter();
+    //   let zoom = this.olmap.getView().getZoom();
+    //   this.setState({ center, zoom });
+    // });
   }
 
-
   render() {
-    console.log(this.state.center)
     return (
-      <div id="map" style={{ width: "100%", height: "500px" }}>
+      <div id="map" style={{ width: "100%", height: "360px" }}>
       </div>
     );
   }

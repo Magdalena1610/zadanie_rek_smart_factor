@@ -1,15 +1,11 @@
 import React, {Component} from 'react';
 import MaterialTable from 'material-table';
 import MapView from './MapView';
-
-
-
 import parkingi from './data/parkingi';
 import './App.css';
 
 class App extends Component {
 
- 
   state = {
     columns: [
       { title: 'Nazwa ulicy', field: 'properties.street' },
@@ -17,14 +13,14 @@ class App extends Component {
       { title: 'Liczba miejsc dla niepełnosprawnych', field: 'properties.handicappedSpots', type: 'numeric' },
       { title: 'Płatny', field: 'properties.paid', type: 'boolean' },
     ],
-    data: parkingi.features,
+    dataParkingi: parkingi,
 
   }
 
   handleOnRowAdd = newData => new Promise((resolve) => {
       setTimeout(() => {
         resolve();
-        this.setState((prevState) => {
+        this.setState(prevState => {
           const data = [...prevState.data];
           data.push(newData);
           return { ...prevState, data };
@@ -35,39 +31,42 @@ class App extends Component {
   handleOnRowUpdate = oldData =>  new Promise((resolve) => {
     setTimeout(() => {
       resolve();
-      this.setState((prevState) => {
+      this.setState(prevState => {
         const data = [...prevState.data];
+        console.log(data)
         data.splice(data.indexOf(oldData), 1);
         return { ...prevState, data };
+        
       });
+      console.log(this.prevState)  
     }, 600)
+    
   });
 
   handleOnRowDelete = oldData =>  new Promise((resolve) => {
     setTimeout(() => {
       resolve();
-      this.setState((prevState) => {
-        const data = [...prevState.data];
+      const data = [...this.state.dataParkingi.features];
         data.splice(data.indexOf(oldData), 1);
-        return { ...prevState, data };
+      this.setState( {
+       data,
       });
     }, 600)
   });
 
 
   render(){
-  
     return (
       <div>
       <MaterialTable
         title="Parking"
         columns={this.state.columns}
-        data={this.state.data}
+        data={this.state.dataParkingi.features}
         editable={
         {
           onRowAdd: this.handleOnRowAdd,
           onRowUpdate: this.handleOnRowUpdate,
-          onRowDelete: this.handleOnRowDelete,
+          onRowDelete: this.handleOnRowDelete
         }
       }
         localization={{
@@ -118,7 +117,7 @@ class App extends Component {
           }
      }}/>
      <div>
-     <MapView data={this.state.data}/>
+     <MapView dataP={this.state.dataParkingi}/>
      </div>
      </div>
     )

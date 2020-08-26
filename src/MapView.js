@@ -10,7 +10,6 @@ import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
 import {Vector as VectorSource} from 'ol/source';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import WKT from 'ol/format/WKT';
-import parkingi from './data/parkingi';
 import {fromLonLat} from 'ol/proj';
 import {useGeographic} from 'ol/proj';
 
@@ -31,9 +30,9 @@ var styles = {
   })
 };
 
-let vectorSource = new VectorSource({
-  features: new GeoJSON().readFeatures(parkingi),
-});
+// let vectorSource = new VectorSource({
+//   features: new GeoJSON().readFeatures(this.props.data),
+// });
 
 let styleFunction = function (feature) {
   return styles[feature.getGeometry().getType()];
@@ -52,7 +51,9 @@ class MapView extends Component {
           source: new OSM()
         }),
         new VectorLayer({
-          source:vectorSource,
+          source:new VectorSource({
+            features: new GeoJSON().readFeatures(this.props.dataP),
+          }),
           style: styleFunction
         })
       ],
@@ -70,7 +71,6 @@ class MapView extends Component {
 //dziala
 
   render() {
-    console.log(this.state.center)
     return (
       <div id="map" style={{ width: "100%", height: "500px" }}>
       </div>

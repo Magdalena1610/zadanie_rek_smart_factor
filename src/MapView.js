@@ -67,7 +67,7 @@ class MapView extends Component {
     this.olmap.setTarget("map");
     useGeographic();
   }
-
+//dziala
 
   render() {
     console.log(this.state.center)

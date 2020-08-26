@@ -1,15 +1,27 @@
 import React, { Component } from "react";
-import OlMap from "ol/Map";
-import OlView from "ol/View";
-import OlLayerTile from "ol/layer/Tile";
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import OlSourceOSM from "ol/source/OSM";
-import GeoJSON from 'ol/format/GeoJSON';
-import Feature from 'ol/Feature';
-import Polygon from 'ol/geom/Polygon';
-import Point from 'ol/geom/Point';
+import Map from "ol/Map";
+import View from "ol/View";
+import Tile from "ol/layer/Tile";
+import OSM from "ol/source/OSM";
+import {Vector as VectorLayer} from 'ol/layer';
+import {Vector as VectorSource} from 'ol/source';
+import FeatureFormat from 'ol/format/Feature';
+import WKT from 'ol/format/WKT';
+import parkingi from './data/parkingi';
 
+console.log(parkingi)
+
+const wkt =
+  'POLYGON((10.689 -25.092, 34.595 ' +
+  '-20.170, 38.814 -35.639, 13.502 ' +
+  '-39.155, 10.689 -25.092))';
+
+ const format = new WKT();
+
+ const feature = format.readFeature(wkt, {
+    dataProjection: 'EPSG:4326',
+    featureProjection: 'EPSG:3857',
+  })
 
 class MapView extends Component {
   constructor(props) {
@@ -17,58 +29,39 @@ class MapView extends Component {
 
     this.state = { center: [0, 0], zoom: 1 };
 
-    this.olmap = new OlMap({
+    this.olmap = new Map({
       target: null,
       layers: [
-        new OlLayerTile({
-          source: new OlSourceOSM()
+        new Tile({
+          source: new OSM()
+        }),
+        new VectorLayer({
+          source: new VectorSource({
+            features: [feature]
+          })
         })
       ],
-      view: new OlView({
-        center: this.props.data,
+      view: new View({
+        center: this.state.center,
         zoom: this.state.zoom
-      }),
-      vector: new VectorLayer({
-        source: new VectorSource({
-          url: this.props.data,
-          format: new GeoJSON()
-        })
       })
     });
-  }
-
-  updateMap() {
-    this.olmap.getView().setCenter(this.state.center);
-    this.olmap.getView().setZoom(this.state.zoom);
   }
 
   componentDidMount() {
     this.olmap.setTarget("map");
 
-    // Listen to map changes
-    this.olmap.on("moveend", () => {
-      let center = this.olmap.getView().getCenter();
-      let zoom = this.olmap.getView().getZoom();
-      this.setState({ center, zoom });
-    });
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    let center = this.olmap.getView().getCenter();
-    let zoom = this.olmap.getView().getZoom();
-    if (center === nextState.center && zoom === nextState.zoom) return false;
-    return true;
-  }
-
-  userAction() {
-    this.setState({ center: [546000, 6868000], zoom: 5 });
+    // // Listen to map changes
+    // this.olmap.on("moveend", () => {
+    //   let center = this.olmap.getView().getCenter();
+    //   let zoom = this.olmap.getView().getZoom();
+    //   this.setState({ center, zoom });
+    // });
   }
 
   render() {
-    this.updateMap(); // Update map on render?
     return (
       <div id="map" style={{ width: "100%", height: "360px" }}>
-        <button onClick={e => this.userAction()}>setState on click</button>
       </div>
     );
   }

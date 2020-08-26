@@ -3,6 +3,7 @@ import MaterialTable from 'material-table';
 import MapView from './MapView';
 
 
+
 import parkingi from './data/parkingi';
 import './App.css';
 
@@ -119,7 +120,6 @@ class App extends Component {
      <div>
      <MapView data={this.state.data}/>
      </div>
-     
      </div>
     )
   }}

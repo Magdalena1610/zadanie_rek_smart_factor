@@ -12,11 +12,10 @@ import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import WKT from 'ol/format/WKT';
 import {fromLonLat} from 'ol/proj';
 import {useGeographic} from 'ol/proj';
+import parkingi from './data/parkingi';
+import App from './App';
 
-
-
-
-var styles = {
+let styles = {
  
   'Polygon': new Style({
     stroke: new Stroke({
@@ -42,7 +41,11 @@ class MapView extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { center: [18.606363236904144,54.38519346546863], zoom: 16 };
+    this.state = { 
+      center: [18.606363236904144,54.38519346546863],
+      zoom: 16,
+      dataParkingi : parkingi,
+    };
 
     this.olmap = new Map({
       target: null,
@@ -52,7 +55,7 @@ class MapView extends Component {
         }),
         new VectorLayer({
           source:new VectorSource({
-            features: new GeoJSON().readFeatures(this.props.dataP),
+            features: new GeoJSON().readFeatures(this.state.dataParkingi),
           }),
           style: styleFunction
         })
@@ -63,6 +66,12 @@ class MapView extends Component {
       })
     });
   }
+  handleSetState = (dataParkingi) =>{
+      this.setState({
+        dataParkingi,
+      })
+      console.log(this.state.dataParkingi)
+  }
 
   componentDidMount() {
     this.olmap.setTarget("map");
@@ -72,8 +81,11 @@ class MapView extends Component {
 
   render() {
     return (
-      <div id="map" style={{ width: "100%", height: "500px" }}>
+      <div>
+        <div id="map" style={{ width: "100%", height: "500px" }}></div>
+        <App dataParkingi={parkingi.features} function={this.handleSetState}/>
       </div>
+      
     );
   }
 }

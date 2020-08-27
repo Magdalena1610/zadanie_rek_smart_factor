@@ -12,7 +12,7 @@ const App = (props) => {
         { title: 'Liczba miejsc dla niepełnosprawnych', field: 'properties.handicappedSpots', type: 'numeric' },
         { title: 'Płatny', field: 'properties.paid', type: 'boolean'},
       ],
-      data: props.dataParkingi ,
+      data: props.dataParkingi,
     });
   
     return (
@@ -26,15 +26,13 @@ const App = (props) => {
               setTimeout(() => {
                 resolve();
                 if (oldData) {
+                  props.functionUpdate(oldData, newData)
                   setState((prevState) => {
                     const data = [...prevState.data];
                     data[data.indexOf(oldData)] = newData;
-                    return( 
-                      props.function({ ...prevState, data }),
-                      { ...prevState, data });
-                      
-                  });
-                  
+                    return(                   
+                      { ...prevState, data }); 
+                  });    
                 }
               }, 600);
             }),
@@ -42,11 +40,12 @@ const App = (props) => {
             new Promise((resolve) => {
               setTimeout(() => {
                 resolve();
+                props.functionDelete(oldData)
                 setState((prevState) => {
                   const data = [...prevState.data];
                   data.splice(data.indexOf(oldData), 1);
                   return( 
-                    props.function({ ...prevState, data }),
+                   // props.function({ ...prevState, data }),
                     { ...prevState, data });
                 });
               }, 600);

@@ -45,7 +45,16 @@ class MapView extends Component {
       center: [18.606363236904144,54.38519346546863],
       zoom: 16,
       dataParkingi : parkingi,
+      
     };
+
+    this.vectorSource = new VectorSource({
+      features: new GeoJSON().readFeatures(this.state.dataParkingi),
+    })
+    this.vectorLayer = new VectorLayer({
+      source: this.vectorSource,
+      style: styleFunction
+    })
 
     this.olmap = new Map({
       target: null,
@@ -53,12 +62,7 @@ class MapView extends Component {
         new TileLayer({
           source: new OSM()
         }),
-        new VectorLayer({
-          source:new VectorSource({
-            features: new GeoJSON().readFeatures(this.state.dataParkingi),
-          }),
-          style: styleFunction
-        })
+        this.vectorLayer
       ],
       view: new View({
         center:fromLonLat(this.state.center),
@@ -66,27 +70,54 @@ class MapView extends Component {
       })
     });
   }
-  handleSetState = (dataParkingi) =>{
-      this.setState({
-        dataParkingi,
-      })
-      console.log(this.state.dataParkingi)
+
+  handleDeleteRow = (oldData) =>{
+    console.log(this.state.dataParkingi)
+    const dataPF = [...this.state.dataParkingi.features];
+    dataPF.splice(dataPF.indexOf(oldData), 1);
+
+    this.setState(previousState => ({
+        dataParkingi:{
+          "type": "FeatureCollection",
+          "features": dataPF,
+          }
+    }));
+
+    console.log(this.state.dataParkingi)
+    // this.vectorSource.refresh();
+    // this.olmap.render();
+    
+  
+  }
+
+  handleUpdateRow = (oldata, newData) =>{
+     
+     
+    this.setState((previousState)=> {
+      const data = [...previousState.dataParkingi.features];
+      data[data.indexOf(oldata)] = newData;
+      
+      return { ...previousState.dataParkingi, data };
+    });
   }
 
   componentDidMount() {
     this.olmap.setTarget("map");
+    
     useGeographic();
   }
 //dziala
 
   render() {
+    console.log(this.state.dataParkingi)
     return (
       <div>
+        <App dataParkingi={this.state.dataParkingi.features} functionUpdate={this.handleUpdateRow} functionDelete={this.handleDeleteRow}/>
         <div id="map" style={{ width: "100%", height: "500px" }}></div>
-        <App dataParkingi={parkingi.features} function={this.handleSetState}/>
       </div>
       
     );
+    
   }
 }
 

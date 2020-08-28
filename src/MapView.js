@@ -1,21 +1,19 @@
 import React, { Component } from "react";
 import 'ol/ol.css';
 import OSM from "ol/source/OSM";
-import Circle from 'ol/geom/Circle';
-import Feature from 'ol/Feature';
 import GeoJSON from 'ol/format/GeoJSON';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import Select from 'ol/interaction/Select';
 import Overlay from 'ol/Overlay';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+import {Fill, Stroke, Style} from 'ol/style';
 import {Vector as VectorSource} from 'ol/source';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import {fromLonLat} from 'ol/proj';
-import {toLonLat} from 'ol/proj';
+
 import {useGeographic} from 'ol/proj';
-import {toStringHDMS} from 'ol/coordinate';
-import {altKeyOnly, click, pointerMove} from 'ol/events/condition';
+
+import {pointerMove} from 'ol/events/condition';
 import ParkingiRest from './ParkingiRest';
 
 import parkingi from './data/parkingi';
@@ -158,7 +156,7 @@ class MapView extends Component {
       <div>
         <App dataParkingi={this.state.dataParkingi.features} functionUpdate={this.handleUpdateRow} functionDelete={this.handleDeleteRow}/>
         <div ref="mapContainer" style={{ width: "100%", height: "500px" }}></div>
-        <div ref="popup" class="ol-popup">    
+        <div ref="popup" className="ol-popup">    
           <div ref="popupContent"></div>
         </div>
         <div><ParkingiRest/></div>

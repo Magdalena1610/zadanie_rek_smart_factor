@@ -28,92 +28,156 @@ let styles = {
     }),
   })
 };
-
-// let vectorSource = new VectorSource({
-//   features: new GeoJSON().readFeatures(this.props.data),
-// });
-
 let styleFunction = function (feature) {
   return styles[feature.getGeometry().getType()];
 };
-
 class MapView extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = { 
+  state = {
       center: [18.606363236904144,54.38519346546863],
       zoom: 16,
       dataParkingi : parkingi,
-      
+      vectorLayer :null,
+      olmap: null,
     };
-
-    this.vectorSource = new VectorSource({
+  
+    
+  
+  componentDidMount() {
+    let vectorSource = new VectorSource({
       features: new GeoJSON().readFeatures(this.state.dataParkingi),
-    })
-    this.vectorLayer = new VectorLayer({
-      source: this.vectorSource,
-      style: styleFunction
-    })
-
-    this.olmap = new Map({
-      target: null,
-      layers: [
-        new TileLayer({
-          source: new OSM()
-        }),
-        this.vectorLayer
-      ],
-      view: new View({
-        center:fromLonLat(this.state.center),
-        zoom: this.state.zoom
-      })
     });
-  }
+    let vectorLayer = new VectorLayer({
+       source: vectorSource,
+     style: styleFunction
+   });
+   
+    this.state.olmap = new Map({
+       target: this.refs.mapContainer,
+       layers: [
+         new TileLayer({
+           source: new OSM()
+         }),
+         vectorLayer
+       ],
+       view: new View({
+         center:fromLonLat(this.state.center),
+         zoom: this.state.zoom
+       })
+     });
+    console.log('componentDidMount')
+     useGeographic(); 
+    //  this.olmap.setTarget("map");   
+  };
+
+  // vectorSource = new VectorSource({
+  //     features: new GeoJSON().readFeatures(this.state.dataParkingi),
+  //   });
+  // vectorLayer = new VectorLayer({
+  //     source: this.vectorSource,
+  //     style: styleFunction
+  // });
+
+  // olmap = new Map({
+  //     target: null,
+  //     layers: [
+  //       new TileLayer({
+  //         source: new OSM()
+  //       }),
+  //       this.vectorLayer
+  //     ],
+  //     view: new View({
+  //       center:fromLonLat(this.state.center),
+  //       zoom: this.state.zoom
+  //     })
+  //   });
+  // ;
 
   handleDeleteRow = (oldData) =>{
-    console.log(this.state.dataParkingi)
-    const dataPF = [...this.state.dataParkingi.features];
-    dataPF.splice(dataPF.indexOf(oldData), 1);
-
-    this.setState(previousState => ({
+    const dataPF = [...this.state.dataParkingi.features]
+    dataPF.splice(dataPF.indexOf(oldData), 1)
+    this.setState({
         dataParkingi:{
           "type": "FeatureCollection",
           "features": dataPF,
-          }
-    }));
-
-    console.log(this.state.dataParkingi)
-    // this.vectorSource.refresh();
-    // this.olmap.render();
+    }});
+    console.log('funkcja usuwania')
     
-  
-  }
+    // this.olmap.render()
+    // this.vectorSource.refresh()
+    // this.olmap.render() 
+  };
+  // componentDidUpdate(prevState) {
+  //   // Typowy sposób użycia (nie zapomnij porównać właściwości):
+  //   if (prevState.dataParkingi !== this.state.dataParkingi) {
+  //      let feature = new Feature(new GeoJSON().readFeatures(prevState.dataParkingi));
+  //      this.vectorSource.addFeature(feature);
+  //      this.olmap.addLayer(this.vectorLayer)
+  //    console.log(prevState.dataParkingi);
+  //   }
 
-  handleUpdateRow = (oldata, newData) =>{
+  componentDidUpdate(prevProps, prevState) {
+    console.log('Prev state', prevState.dataParkingi); // Before update
+    console.log('New state', this.state.dataParkingi); // After update 
+
+    if(prevState.dataParkingi !== this.state.dataParkingi){
+      let vectorSource = new VectorSource({
+        features: new GeoJSON().readFeatures(this.state.dataParkingi),
+      });
+      let vectorLayer = new VectorLayer({
+         source: vectorSource,
+       style: styleFunction
+     });
+       let olmap = new Map({
+          target: this.refs.mapUpdate,
+          layers: [
+            new TileLayer({
+              source: new OSM()
+            }),
+            vectorLayer
+          ],
+          view: new View({
+            center:fromLonLat(this.state.center),
+            zoom: this.state.zoom,
+          }),     
+      })
+    //   this.setState({
+    //     olmap,
+    //   })
+      useGeographic(); 
+     //  this.olmap.setTarget("map");   
      
-     
+    }
+  }
+    
+    // this.state.vectorSource.addFeature(new Feature(new Circle([5e6, 7e6], 1e6)));
+    // let feature = new Feature(this.state.dataParkingi.features);
+    // this.vectorSource.addFeature(feature);
+    // console.log(this.vectorSource.features)
+    // this.vectorLayer.setSource({
+    //     features: this.state.dataParkingi
+    //   });
+    // this.state.featuresLayer.setSource(
+    //   new VectorSource({
+    //     features: this.state.dataParkingi
+    //   })
+    // ); 
+  
+  handleUpdateRow = (oldata, newData) =>{    
     this.setState((previousState)=> {
       const data = [...previousState.dataParkingi.features];
-      data[data.indexOf(oldata)] = newData;
-      
+      data[data.indexOf(oldata)] = newData;     
       return { ...previousState.dataParkingi, data };
     });
-  }
+  };
 
-  componentDidMount() {
-    this.olmap.setTarget("map");
-    
-    useGeographic();
-  }
-//dziala
-
-  render() {
-    console.log(this.state.dataParkingi)
+  
+  render(){
     return (
       <div>
         <App dataParkingi={this.state.dataParkingi.features} functionUpdate={this.handleUpdateRow} functionDelete={this.handleDeleteRow}/>
-        <div id="map" style={{ width: "100%", height: "500px" }}></div>
+        <div ref="mapContainer" style={{ width: "100%", height: "500px" }}></div>
+        <div ref="mapUpdate" style={{ width: "100%", height: "500px" }}></div>
       </div>
       
     );

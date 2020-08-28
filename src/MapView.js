@@ -16,6 +16,7 @@ import {toLonLat} from 'ol/proj';
 import {useGeographic} from 'ol/proj';
 import {toStringHDMS} from 'ol/coordinate';
 import {altKeyOnly, click, pointerMove} from 'ol/events/condition';
+import ParkingiRest from './ParkingiRest';
 
 import parkingi from './data/parkingi';
 import './MapView.css';
@@ -160,6 +161,7 @@ class MapView extends Component {
         <div ref="popup" class="ol-popup">    
           <div ref="popupContent"></div>
         </div>
+        <div><ParkingiRest/></div>
       </div>
       
     );

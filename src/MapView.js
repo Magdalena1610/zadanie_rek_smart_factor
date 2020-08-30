@@ -37,8 +37,6 @@ let styleFunction = function (feature) {
   return styles[feature.getGeometry().getType()];
 };
 
-
-
 class MapView extends Component {
 
   state = {
@@ -46,8 +44,6 @@ class MapView extends Component {
       zoom: 16,
       dataParkingi : parkingi,
     }
-
-   
 
   componentDidMount() {
     let container = this.refs.popup;
@@ -60,8 +56,6 @@ class MapView extends Component {
         duration: 250,
       },
     });
-
-    
     let vectorSource = new VectorSource({
       features: new GeoJSON().readFeatures(this.state.dataParkingi),
     });
@@ -102,24 +96,15 @@ class MapView extends Component {
         }else{
           ifPaid ='Nie';
         }
-      
         content.innerHTML = '<span>Ulica: <b>'+ properties.street +'</b></span><br>'+
                             '<span>Liczba miejsc parkingowych: <b>'+ properties.spots +'</b></span><br>'+
                             '<span>W tym dla niepełnosprawnych: <b>'+ properties.handicappedSpots +'</b></span><br>'+
                             '<span>Płatny: <b>'+ ifPaid +'</b></span><br><br>'+
                             'Lokalizacja: <code>' + coordinate[0][0] + '</code>';
         overlay.setPosition(coordinate[0][0]);
-
-     
-
-    }
-     });
-
-   
+    }});
     useGeographic(); 
   };
-
-  
 
   handleDeleteRow = (oldData) =>{
     const dataPF = [...this.state.dataParkingi.features]
@@ -138,13 +123,8 @@ class MapView extends Component {
  
 
   componentDidUpdate(prevProps, prevState) {
-
-    console.log(this.state.zoom)
-
-
     console.log('Prev state', prevState.dataParkingi); // Before update
     console.log('New state', this.state.dataParkingi); // After update 
-    this.olmap.render() 
   }
 
   handleUpdateRow = (oldata, newData) =>{    
@@ -155,15 +135,14 @@ class MapView extends Component {
     });
   };
 
-  handleClickRow = (rowData) =>{    
-    console.log(rowData.geometry.coordinates[0][0])
-    let coordinates = rowData.geometry.coordinates[0][0]
-    this.setState({
-      zoom : 20,
-      center: coordinates
-    })
-    
-  };
+  // handleClickRow = (rowData) =>{    
+  //   console.log(rowData.geometry.coordinates[0][0])
+  //   let coordinates = rowData.geometry.coordinates[0][0]
+  //   this.setState({
+  //     zoom : 20,
+  //     center: coordinates
+  //   })  
+  // };
 
   
   render(){

@@ -22,16 +22,16 @@ const App = (props) => {
         columns={state.columns}
         data={state.data}
         tableRef={state.tableRef}
-        onRowClick={(event, rowData) => {
-          rowData.tableData.checked = !rowData.tableData.checked;
-          state.tableRef.current.dataManager.changeRowSelected(
-             rowData.tableData.checked,
-             [rowData.tableData.id]
-          );
-          state.tableRef.current.onSelectionChange(rowData);
-          //console.log(rowData)
-          props.functionClick(rowData);
-      }}
+      //   onRowClick={(event, rowData) => {
+      //     rowData.tableData.checked = !rowData.tableData.checked;
+      //     state.tableRef.current.dataManager.changeRowSelected(
+      //        rowData.tableData.checked,
+      //        [rowData.tableData.id]
+      //     );
+      //     state.tableRef.current.onSelectionChange(rowData);
+      //     //console.log(rowData)
+      //     props.functionClick(rowData);
+      // }}
         editable={{
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve) => {

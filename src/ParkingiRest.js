@@ -42,10 +42,12 @@ class ParkingiRest extends Component {
     };
 
     fetch(
-      "https://rekrutacja-sf.herokuapp.com/parking/{" + this.state.value + "}",
+      "/parking/" + JSON.stringify(this.state.value) ,
       options
     )
-      .then((response) => response.json())
+      .then((response) => {
+        return response.json()
+      })
       .then((data) => {
         console.log("Success:", data);
       })
@@ -54,25 +56,25 @@ class ParkingiRest extends Component {
 
   componentDidMount() {
     const options = { method: "GET", headers: { Origin: "*" } };
-    fetch("https://rekrutacja-sf.herokuapp.com/parking", options)
-      .then((response) => response.json())
-      .then((data) => {
-        let newData = [];
+    fetch("/parking", options)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data  => {
 
+        let newData = [];
+      
+        console.log(data);
         data.forEach((element) => {
           let counter = 0;
-          //   console.log(element.places);
-
           for (const [key, value] of Object.entries(element.places)) {
             if (value) {
               counter += 1;
             }
-            // console.log(`${key}: ${value}`);
           }
 
           newData.push({ name: element.name, freePlaces: counter });
         });
-        // console.log(newData);
         this.setState({
           data: newData,
         });

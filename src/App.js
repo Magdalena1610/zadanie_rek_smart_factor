@@ -13,6 +13,7 @@ const App = (props) => {
         { title: 'Płatny', field: 'properties.paid', type: 'boolean'},
       ],
       data: props.dataParkingi,
+      tableRef: React.createRef()
     });
   
     return (
@@ -20,6 +21,17 @@ const App = (props) => {
         title="Zadanie 1"
         columns={state.columns}
         data={state.data}
+        tableRef={state.tableRef}
+        onRowClick={(event, rowData) => {
+          rowData.tableData.checked = !rowData.tableData.checked;
+          state.tableRef.current.dataManager.changeRowSelected(
+             rowData.tableData.checked,
+             [rowData.tableData.id]
+          );
+          state.tableRef.current.onSelectionChange(rowData);
+          //console.log(rowData)
+          props.functionClick(rowData);
+      }}
         editable={{
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve) => {
@@ -86,7 +98,7 @@ const App = (props) => {
               lastTooltip: 'Ostatnia strona'
           },
           toolbar: {
-              nRowsSelected: '{0} rekordów(s) wybranych(s)',
+              nRowsSelected: '{0} rekord(ów) wybranych',
               showColumnsTitle: 'Wyświetl kolumny',
               showColumnsAriaLabel: 'Wyświetl kolumny',
               exportTitle: 'Eksportuj',

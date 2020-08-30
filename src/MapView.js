@@ -138,8 +138,13 @@ class MapView extends Component {
  
 
   componentDidUpdate(prevProps, prevState) {
+
+    console.log(this.state.zoom)
+
+
     console.log('Prev state', prevState.dataParkingi); // Before update
     console.log('New state', this.state.dataParkingi); // After update 
+    this.olmap.render() 
   }
 
   handleUpdateRow = (oldata, newData) =>{    
@@ -150,11 +155,21 @@ class MapView extends Component {
     });
   };
 
+  handleClickRow = (rowData) =>{    
+    console.log(rowData.geometry.coordinates[0][0])
+    let coordinates = rowData.geometry.coordinates[0][0]
+    this.setState({
+      zoom : 20,
+      center: coordinates
+    })
+    
+  };
+
   
   render(){
     return (
       <div>
-        <App dataParkingi={this.state.dataParkingi.features} functionUpdate={this.handleUpdateRow} functionDelete={this.handleDeleteRow}/>
+        <App dataParkingi={this.state.dataParkingi.features} functionUpdate={this.handleUpdateRow} functionDelete={this.handleDeleteRow}  functionClick={this.handleClickRow}/>
         <div ref="mapContainer" style={{ width: "100%", height: "500px" }}></div>
         <div ref="popup" className="ol-popup">    
           <div ref="popupContent"></div>

@@ -43,6 +43,7 @@ class MapView extends Component {
       center: [18.606363236904144,54.38519346546863],
       zoom: 16,
       dataParkingi : parkingi,
+      
     }
 
   componentDidMount() {
